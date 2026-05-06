@@ -1,0 +1,56 @@
+---
+const principles = [
+  {
+    title: "Plan → Build → Polish",
+    body: "Every feature goes through three phases. Planning surfaces existing code that already solves the problem (the <em>rule of three</em>: no abstraction until three concrete uses exist). Build runs background audits on each completed chunk to catch quality drift while context is fresh. Polish reviews every changed file against the quality bar before merge. Each phase catches different categories of issue at the cheapest possible time.",
+  },
+  {
+    title: "Docs ship in the same branch as the code",
+    body: "PlatPursuit has 49 system docs, each with a mandatory <em>Gotchas and Pitfalls</em> section. When a system's behavior changes, its documentation updates in the same branch. Stale docs are worse than no docs. The discipline pays off three ways: future-me onboards faster, present-me explains decisions clearly, and the writing surfaces design problems before they ship.",
+  },
+  {
+    title: "AI tools are part of my workflow",
+    body: "Claude Code accelerates the build phase. Architecture, system design, and every decision about what to ship and what to defer are mine. The three-phase workflow above exists in part because the parts AI is good at sit between two phases that have to stay human: planning before, audit after. I review every line that ships, and I don't merge code I can't defend in an interview.",
+  },
+  {
+    title: "Search before you build",
+    body: "Before finalizing any plan, I search the codebase for utilities, helpers, and patterns that already cover the proposed work. If existing code covers the need, I reuse it. If it almost covers it, I extend it. New abstractions only get created when nothing suitable exists. Three similar lines is fine; speculative generalization for a future requirement that may never come is technical debt with extra steps.",
+  },
+  {
+    title: "Build what's needed, not what might be",
+    body: "Scope follows the task, not what the task might become. A bug fix doesn't need surrounding cleanups; a one-shot operation doesn't need a helper; new abstractions wait until three concrete uses exist. Unused code gets deleted, not deprecated or wrapped behind a flag. Validation lives at system boundaries (user input, external APIs); internal code is trusted to do what it says.",
+  },
+];
+---
+
+<section id="how-i-work" class="relative border-t border-slate-900">
+  <div class="mx-auto max-w-5xl px-6 py-20 lg:py-28">
+
+    <div class="font-mono text-xs tracking-[0.2em] uppercase text-cyan-400/80 mb-3">
+      Working Principles
+    </div>
+
+    <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-slate-100">
+      How I work
+    </h2>
+
+    <p class="mt-2 text-lg md:text-xl text-slate-400 max-w-2xl">
+      Five things that show up in everything I ship.
+    </p>
+
+    <div class="mt-14 space-y-12 lg:space-y-14">
+      {principles.map((p, i) => (
+        <div class="scroll-reveal grid grid-cols-[auto_1fr] gap-5 md:gap-8">
+          <div class="font-mono text-sm tracking-[0.15em] text-cyan-400/70 pt-1.5 select-none" aria-hidden="true">
+            {String(i + 1).padStart(2, "0")}
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-100 text-xl md:text-2xl tracking-tight">{p.title}</h3>
+            <p class="prose-code mt-3 text-slate-400 text-base md:text-lg leading-relaxed" set:html={p.body}></p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>

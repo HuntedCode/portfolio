@@ -1,0 +1,92 @@
+---
+const links = {
+  github: "https://github.com/HuntedCode",
+  email: "jeffrey.lowe.dev@gmail.com",
+  resumeFullStack: "/resume-fullstack.pdf",
+  resumePython: "/resume-python.pdf",
+};
+
+const currentYear = new Date().getFullYear();
+---
+
+<section id="contact" class="relative isolate border-t border-slate-900">
+  <div
+    class="absolute inset-x-0 bottom-0 -z-10 h-[400px] bg-gradient-to-t from-cyan-500/[0.04] via-transparent to-transparent"
+    aria-hidden="true"
+  ></div>
+
+  <div class="mx-auto max-w-3xl px-6 py-20 lg:py-28 text-center">
+
+    <div class="font-mono text-xs tracking-[0.2em] uppercase text-cyan-400/80 mb-3">
+      Get in touch
+    </div>
+
+    <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-slate-100">
+      Let's talk
+    </h2>
+
+    <p class="mt-4 text-base md:text-lg text-slate-400 max-w-xl mx-auto leading-relaxed">
+      I'm actively looking for full-stack, backend, or Python developer roles. Email is the fastest way to reach me, and the resumes below are tailored to each track.
+    </p>
+
+    <div class="mt-10 flex flex-col items-center gap-5">
+      <a
+        href={`mailto:${links.email}`}
+        class="inline-flex items-center gap-2.5 px-6 py-3 rounded-lg bg-cyan-400 text-slate-950 font-semibold text-base shadow-md shadow-cyan-500/20 hover:bg-cyan-300 hover:shadow-lg hover:shadow-cyan-400/30 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-200"
+      >
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+        {links.email}
+      </a>
+
+      <div class="flex flex-wrap justify-center gap-3">
+        <a
+          href={links.resumeFullStack}
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 font-medium text-sm hover:border-cyan-400 hover:text-cyan-400 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-200"
+        >
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          Resume (Full-Stack)
+        </a>
+        <a
+          href={links.resumePython}
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 font-medium text-sm hover:border-cyan-400 hover:text-cyan-400 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-200"
+        >
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          Resume (Python)
+        </a>
+        <a
+          href={links.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 font-medium text-sm hover:border-cyan-400 hover:text-cyan-400 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-200"
+        >
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.21.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.96 0-1.32.47-2.4 1.24-3.24-.12-.3-.54-1.53.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 016 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.24 0 4.63-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.6-.01 2.89-.01 3.28 0 .32.22.7.83.58A12 12 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="relative border-t border-slate-900">
+  <div class="mx-auto max-w-5xl px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-3 font-mono text-xs text-slate-600">
+    <div>&copy; {currentYear} Jeffrey Lowe</div>
+    <div class="flex items-center gap-2">
+      <span>Built with</span>
+      <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-400 focus-visible:text-cyan-400 focus-visible:outline-none transition-colors">Astro</a>
+      <span class="text-slate-700">+</span>
+      <a href="https://tailwindcss.com" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-400 focus-visible:text-cyan-400 focus-visible:outline-none transition-colors">Tailwind</a>
+    </div>
+  </div>
+</footer>

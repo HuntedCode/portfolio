@@ -1,0 +1,161 @@
+---
+const stats = [
+  { value: "30+", label: "Django models" },
+  { value: "49", label: "system docs" },
+  { value: "41", label: "dashboard modules" },
+  { value: "Live", label: "in production" },
+];
+
+const highlights = [
+  {
+    title: "Schema and ORM",
+    body: "30+ Django model schema covering games, trophies, badges, dashboards, and payments. Includes a <code>Concept.absorb()</code> migration method that safely merges 15+ related models during sync reassignments, preserving relational integrity when PSN reassigns concepts upstream.",
+  },
+  {
+    title: "Third-party API integration",
+    body: "Six-strategy IGDB matching pipeline with retry-on-401, no-match persistence, and platform-overlap enforced as a hard requirement. Handles cover art, metadata, and Tier-2 stats end to end across thousands of games.",
+  },
+  {
+    title: "Frontend and responsive design",
+    body: "Customizable 41-module dashboard with a documented three-layout system (375 / 768 / 1024 px). Mobile-first, dark-theme-aware. The design system is the canonical reference for every page in the app.",
+  },
+  {
+    title: "Database performance",
+    body: "Diagnosed and fixed a production OOM caused by <code>select_related</code> eagerly fetching a ~30 KB JSON column across every cover-art render. Repair was targeted <code>.defer()</code> chains paired with <code>select_related</code>, with explicit <code>.only()</code> opt-in only where the JSON was actually needed. Also ships <code>Subquery</code>/<code>OuterRef</code> workarounds for Django's <code>.update()</code> SET-clause limits.",
+  },
+  {
+    title: "Process maturity",
+    body: "Every system has a doc with a mandatory <em>Gotchas and Pitfalls</em> section. When behavior changes, the relevant doc updates in the same branch. Three-phase quality workflow: plan with a reuse check, build with inline audits, polish before merge.",
+  },
+];
+
+const stack = ["Python", "Django", "PostgreSQL", "Redis", "Tailwind", "daisyUI", "PSN API", "IGDB API"];
+
+const links = {
+  live: "https://platpursuit.com",
+  github: "https://github.com/HuntedCode/plat-pursuit-django",
+};
+---
+
+<section id="platpursuit" class="relative">
+  <div class="mx-auto max-w-5xl px-6 py-20 lg:py-28">
+
+    <div class="font-mono text-xs tracking-[0.2em] uppercase text-cyan-400/80 mb-3">
+      <span class="text-cyan-400">Case Study</span>
+      <span class="text-slate-700 mx-2">/</span>
+      <span class="text-slate-500">01</span>
+    </div>
+
+    <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-slate-100">
+      PlatPursuit
+    </h2>
+
+    <p class="mt-2 text-lg md:text-xl text-slate-400">
+      PlayStation trophy tracking, end to end. Production Django web app with active users, payment flows, and ongoing maintenance.
+    </p>
+
+    <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-slate-500">
+      <span>Solo author</span>
+      <span class="text-slate-700" aria-hidden="true">·</span>
+      <span>2024 &ndash; present</span>
+      <span class="text-slate-700" aria-hidden="true">·</span>
+      <span>Production</span>
+      <span class="text-slate-700" aria-hidden="true">·</span>
+      <span class="text-cyan-400/80">Active maintenance</span>
+    </div>
+
+    <div class="group relative mt-10 rounded-xl overflow-hidden border-2 border-slate-800 bg-slate-900 shadow-xl shadow-cyan-500/[0.05] hover:shadow-cyan-500/10 hover:border-slate-700 transition-all duration-300">
+      <img
+        src="/screenshots/platpursuit-dashboard.png"
+        alt="PlatPursuit dashboard showing recent platinums and personal stats modules"
+        width="1919"
+        height="910"
+        loading="lazy"
+        class="block w-full h-auto"
+      />
+      <div class="absolute inset-0 ring-1 ring-inset ring-white/[0.04] rounded-xl pointer-events-none"></div>
+    </div>
+
+    <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3">
+      {stats.map((stat) => (
+        <div class="rounded-lg bg-slate-900/60 border border-slate-800 p-4 hover:border-cyan-400/30 transition-colors">
+          <div class="text-2xl md:text-3xl font-bold text-slate-100 tracking-tight">{stat.value}</div>
+          <div class="mt-1 text-xs font-mono uppercase tracking-wider text-slate-500">{stat.label}</div>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-14">
+      <h3 class="font-mono text-xs uppercase tracking-[0.2em] text-cyan-400 mb-3">What I built</h3>
+      <ul class="space-y-5">
+        {highlights.map((item) => (
+          <li class="scroll-reveal border-l-2 border-slate-800 pl-5 hover:border-cyan-400/60 transition-colors">
+            <div class="font-semibold text-slate-100 text-base md:text-lg">{item.title}</div>
+            <p class="prose-code mt-1 text-slate-400 text-sm md:text-base leading-relaxed" set:html={item.body}></p>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="mt-14 rounded-xl border border-slate-800 bg-slate-900/40 p-6 md:p-8">
+      <h3 class="font-mono text-xs uppercase tracking-[0.2em] text-cyan-400 mb-3">The signature story</h3>
+      <h4 class="text-xl md:text-2xl font-bold text-slate-100 tracking-tight mb-4">
+        Designing TokenKeeper: a custom worker pool for Sony's PSN API
+      </h4>
+
+      <div class="prose-code space-y-4 text-slate-300 text-sm md:text-base leading-relaxed">
+        <p>
+          Sony doesn't expose a public OAuth flow for third parties. PlatPursuit authenticates with PSN using <code>NPSSO</code> cookies, which mint short-lived access tokens whose state needs to flow cleanly through every checkpoint of a sync pipeline: queue dispatcher, per-token worker, rate limiter, response parser, DB writer. <code>Celery</code> is closed off in that respect; every task hand-off goes through pickle byte-stream serialization, which forces lossy conversion and implicit assumptions at each step. <code>TokenKeeper</code> keeps that state in-process and JSON-shaped, so each piece of the pipeline reads exactly what the previous one wrote, no decoding ambiguity.
+        </p>
+        <p>
+          So I built it: one long-lived Python process, in-memory token pool, no broker.
+        </p>
+        <p>
+          TokenKeeper runs three worker threads per token group, pulling jobs from a five-tier Redis priority queue (orchestrator, high, medium, low, bulk). The bulk tier exists specifically so whale accounts with 5,000+ games can't starve normal users. Each token is wrapped in a <code>TokenInstance</code> dataclass tracking busy state (atomic Redis-based locking), expiry, an LRU cache of user lookups, and outbound IP for proxy routing. A health loop runs every 60 seconds: it refreshes any token within 5 minutes of expiring, publishes stats over Redis pub/sub for the dashboard, and runs a circuit breaker that trips on five PSN 5xx errors in a 60-second window. When PSN goes down, sync timestamps get backdated and writes pause cleanly until it recovers.
+        </p>
+        <p>
+          The hardest bug in this system wasn't conceptual; it was <code>psnawp</code>'s default rate limiter, which uses a SQLite-backed bucket and produced "database is locked" errors under concurrent load. The fix was a small custom PSN client subclass that swaps in an in-memory bucket. A <code>PSNManager</code> facade hides all of this from the rest of the app: views, cron handlers, and API endpoints call <code>assign_job()</code> and never see the worker. One Python process owns the full PSN surface: auth, rate limiting, retries, priority queueing, and observability. No broker, no result backend, no separate worker pool to scale. The takeaway: when the obvious choice imposes a heavier operational burden than the workload justifies, building the right thing custom is often cheaper to operate and simpler to reason about. Especially when stateful auth sits at the core of the workload.
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-12">
+      <h3 class="font-mono text-xs uppercase tracking-[0.2em] text-cyan-400 mb-3">Stack</h3>
+      <div class="flex flex-wrap gap-2">
+        {stack.map((tech) => (
+          <span class="font-mono text-xs px-3 py-1.5 rounded-md bg-slate-900 border border-slate-800 text-slate-300">{tech}</span>
+        ))}
+      </div>
+    </div>
+
+    <div class="mt-10 flex flex-wrap gap-3">
+      {links.live && (
+        <a
+          href={links.live}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 font-semibold text-sm hover:border-cyan-400 hover:text-cyan-400 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-200"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+          Visit live site
+        </a>
+      )}
+      <a
+        href={links.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-100 font-semibold text-sm hover:border-cyan-400 hover:text-cyan-400 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 transition-all duration-200"
+      >
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.21.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.96 0-1.32.47-2.4 1.24-3.24-.12-.3-.54-1.53.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 016 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.24 0 4.63-2.81 5.65-5.49 5.95.43.37.81 1.1.81 2.22 0 1.6-.01 2.89-.01 3.28 0 .32.22.7.83.58A12 12 0 0024 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        View on GitHub
+      </a>
+    </div>
+
+  </div>
+</section>
