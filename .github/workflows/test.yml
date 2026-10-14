@@ -1,0 +1,25 @@
+# Build the site and run its checks (tests/) on every PR and every push to main, with the same
+# Node (.nvmrc) and npm (package.json "packageManager") that Cloudflare Pages deploys with.
+# Cloudflare's own preview build only proves the site builds; this also catches a broken link,
+# a lost link-preview image or an em dash in the copy before the deploy.
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: npm run install:pinned
+      - run: npm test
