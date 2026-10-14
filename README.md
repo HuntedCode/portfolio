@@ -22,11 +22,11 @@ Astro 5, Tailwind CSS v4, Geist and Geist Mono fonts. Static deploy to Cloudflar
 ## Local development
 
 ```
-npm install
+npm ci
 npm run dev
 ```
 
-Then visit `http://localhost:4321/`.
+Then visit `http://localhost:4321/`. Use the Node in `.nvmrc` and the npm in `package.json`'s `packageManager` (`npm run install:pinned` installs with exactly that npm).
 
 ## Build
 
@@ -35,3 +35,11 @@ npm run build
 ```
 
 Output is written to `dist/`.
+
+## Test
+
+```
+npm test
+```
+
+Builds the site, then checks the output: every local link and asset resolves, both resumes are linked, the link-preview image exists, and the copy has no em dashes. The same check runs on every pull request.

@@ -52,6 +52,26 @@ Jeffrey uses AI tools (Claude Code) extensively. He wants to acknowledge this ho
 
 The line to watch: anything on the site must be something Jeffrey can speak to in depth in an interview. No knowledge gaps.
 
+## Development and Deploy
+
+| Command | What it does |
+|---------|--------------|
+| `npm ci` | Install from the lockfile with your local npm (keep it at `packageManager`'s 11.6.2, Node per `.nvmrc`) |
+| `npm run dev` | Dev server on `http://localhost:4321/` |
+| `npm test` | `astro build`, then `node --test`: the site checks in `tests/site.test.mjs` and the install-script tests |
+| `npm run install:pinned` | `npm ci` with the exact npm in `package.json` `packageManager` (used by CI and Cloudflare) |
+| `npm run build:cloudflare` | The Cloudflare Pages build command: pinned install, then build |
+
+**Test harness:** Node's built-in runner, no test dependencies. `tests/site.test.mjs` runs against the built `dist/`, so `npm test` always builds first. CI (`.github/workflows/test.yml`) runs it on every PR and push to main.
+
+**Cloudflare Pages settings** (dashboard, not the repo): environment variable `SKIP_DEPENDENCY_INSTALL=1`, build command `npm run build:cloudflare`, output directory `dist`. Node comes from `.nvmrc`, pinned to the exact `22.16.0` Cloudflare's build image ships so CI tests on the same Node (a bare `22` gives CI the newest 22.x instead).
+
+### Gotchas and Pitfalls
+
+- **Cloudflare cannot pin npm.** Its build image uses the npm bundled with its Node (10.9.2 on Node 22) and ignores `engines` and `packageManager`. A lockfile written by npm 11 can then fail its `npm ci` ("Missing: @emnapi/... from lock file"). That is why Cloudflare skips its own install and runs `install:pinned`, which installs with `packageManager`'s npm. Bump `packageManager` and your local npm together.
+- **Change the Cloudflare settings only once `main` has `build:cloudflare`.** The settings apply to every branch: before that merge they break the production deploy, and after it they still fail preview builds (and "retry deployment") for any branch or commit older than it, with "Missing script: build:cloudflare". Rebase or merge `main` into such a branch.
+- **The resume links are defined twice** (`Hero.astro` and `Contact.astro`). Rename a PDF in both; the broken-link test catches a miss.
+
 ## Git Commit Scopes
 
-Scopes for this project: `content`, `layout`, `style`, `assets`, `deploy`, `chore`
+Scopes for this project: `content`, `layout`, `style`, `assets`, `deploy`, `test`, `chore`
