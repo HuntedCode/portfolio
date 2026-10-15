@@ -6,8 +6,8 @@ updates:
   # own PRs as soon as an advisory is published (enabled in the repository settings).
   #
   # npm is build-only: the site is static, so nothing from node_modules runs for visitors. CI
-  # builds and checks the site on every PR, with the npm Cloudflare installs with. Node itself is
-  # pinned in .nvmrc to Cloudflare's build image, so Dependabot leaves it alone.
+  # builds and checks the site on every PR, with the npm Cloudflare installs with. Dependabot does
+  # not read .nvmrc, so Node stays pinned to Cloudflare's build image until bumped by hand.
   - package-ecosystem: npm
     directory: /
     schedule:
