@@ -64,11 +64,13 @@ The line to watch: anything on the site must be something Jeffrey can speak to i
 
 **Test harness:** Node's built-in runner, no test dependencies. `tests/site.test.mjs` runs against the built `dist/`, so `npm test` always builds first. CI (`.github/workflows/test.yml`) runs it on every PR and push to main.
 
+**Dependabot** (`.github/dependabot.yml`): security PRs as soon as an advisory is published (on in the repository settings), plus one grouped npm PR and one grouped GitHub Actions PR with every minor and patch update on the 1st of each month. Each major update opens its own PR. A green CI run means the site still builds and passes its checks with the npm Cloudflare installs with; Cloudflare's preview build is the second opinion. A reminder issue for the monthly review opens on the 2nd.
+
 **Cloudflare Pages settings** (dashboard, not the repo): environment variable `SKIP_DEPENDENCY_INSTALL=1`, build command `npm run build:cloudflare`, output directory `dist`. Node comes from `.nvmrc`, pinned to the exact `22.16.0` Cloudflare's build image ships so CI tests on the same Node (a bare `22` gives CI the newest 22.x instead).
 
 ### Gotchas and Pitfalls
 
-- **Cloudflare cannot pin npm.** Its build image uses the npm bundled with its Node (10.9.2 on Node 22) and ignores `engines` and `packageManager`. A lockfile written by npm 11 can then fail its `npm ci` ("Missing: @emnapi/... from lock file"). That is why Cloudflare skips its own install and runs `install:pinned`, which installs with `packageManager`'s npm. Bump `packageManager` and your local npm together.
+- **Cloudflare cannot pin npm.** Its build image uses the npm bundled with its Node (10.9.2 on Node 22) and ignores `engines` and `packageManager`. A lockfile written by npm 11 can then fail its `npm ci` ("Missing: @emnapi/... from lock file"). That is why Cloudflare skips its own install and runs `install:pinned`, which installs with `packageManager`'s npm. Bump `packageManager` and your local npm together. If a Dependabot PR fails CI at `install:pinned`, its lockfile was likely written by a different npm: check out the branch, rewrite the lockfile with the pinned npm (`npx -y npm@<packageManager version> install --package-lock-only`) and push it to the PR.
 - **Change the Cloudflare settings only once `main` has `build:cloudflare`.** The settings apply to every branch: before that merge they break the production deploy, and after it they still fail preview builds (and "retry deployment") for any branch or commit older than it, with "Missing script: build:cloudflare". Rebase or merge `main` into such a branch.
 - **Contact links live in one place: `src/data/links.ts`** (email, GitHub, both resumes), read by `Hero.astro` and `Contact.astro`. Change them there, not in a component. `tests/site.test.mjs` fails if the two sections stop offering the same links or a resume file is renamed without its link. The case studies keep their own project links.
 
