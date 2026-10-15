@@ -70,6 +70,23 @@ test("both resumes are linked", () => {
   }
 });
 
+/** The ways to reach Jeffrey a section links to: email, GitHub profile, resumes. */
+function reachLinks(section) {
+  const pattern = /href="(mailto:[^"]+|https:\/\/github\.com\/[^"/]+|\/resume-[^"]+)"/g;
+  return [...new Set([...section.matchAll(pattern)].map((m) => m[1]))].sort();
+}
+
+test("the hero and the contact section offer the same ways to reach Jeffrey", () => {
+  // Both read src/data/links.ts; this catches either section dropping or hard-coding one.
+  const hero = html.slice(html.indexOf("<section"), html.indexOf("<section", html.indexOf("<section") + 1));
+  const contact = html.slice(html.indexOf('<section id="contact"'));
+  const fromHero = reachLinks(hero);
+  assert.ok(fromHero.some((href) => href.startsWith("mailto:")), "no email link in the hero");
+  assert.ok(fromHero.some((href) => href.startsWith("https://github.com/")), "no GitHub link in the hero");
+  assert.equal(fromHero.length, 4, `expected email, GitHub and two resumes, got ${fromHero.join(", ")}`);
+  assert.deepEqual(reachLinks(contact), fromHero);
+});
+
 test("link previews carry an absolute image URL that exists", () => {
   for (const [attr, name] of [["property", "og:image"], ["name", "twitter:image"]]) {
     const url = metaContent(html, attr, name);

@@ -70,7 +70,7 @@ The line to watch: anything on the site must be something Jeffrey can speak to i
 
 - **Cloudflare cannot pin npm.** Its build image uses the npm bundled with its Node (10.9.2 on Node 22) and ignores `engines` and `packageManager`. A lockfile written by npm 11 can then fail its `npm ci` ("Missing: @emnapi/... from lock file"). That is why Cloudflare skips its own install and runs `install:pinned`, which installs with `packageManager`'s npm. Bump `packageManager` and your local npm together.
 - **Change the Cloudflare settings only once `main` has `build:cloudflare`.** The settings apply to every branch: before that merge they break the production deploy, and after it they still fail preview builds (and "retry deployment") for any branch or commit older than it, with "Missing script: build:cloudflare". Rebase or merge `main` into such a branch.
-- **The resume links are defined twice** (`Hero.astro` and `Contact.astro`). Rename a PDF in both; the broken-link test catches a miss.
+- **Contact links live in one place: `src/data/links.ts`** (email, GitHub, both resumes), read by `Hero.astro` and `Contact.astro`. Change them there, not in a component. `tests/site.test.mjs` fails if the two sections stop offering the same links or a resume file is renamed without its link. The case studies keep their own project links.
 
 ## Git Commit Scopes
 
