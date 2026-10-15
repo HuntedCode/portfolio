@@ -1,0 +1,32 @@
+version: 2
+updates:
+  # Version updates: one grouped PR a month per ecosystem with every minor and patch update,
+  # reviewed in the monthly dependency review (a reminder issue opens on the 2nd). Each major
+  # update (a new Astro or Tailwind major, say) opens its own PR. Security updates arrive as their
+  # own PRs as soon as an advisory is published (enabled in the repository settings).
+  #
+  # npm is build-only: the site is static, so nothing from node_modules runs for visitors. CI
+  # builds and checks the site on every PR, with the npm Cloudflare installs with. Dependabot does
+  # not read .nvmrc, so Node stays pinned to Cloudflare's build image until bumped by hand.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      npm-monthly:
+        patterns: ['*']
+        update-types: [minor, patch]
+    commit-message:
+      prefix: chore(deploy)
+
+  # GitHub Actions: keep workflow actions current, since they run with repository access.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions-monthly:
+        patterns: ['*']
+        update-types: [minor, patch]
+    commit-message:
+      prefix: chore(test)
